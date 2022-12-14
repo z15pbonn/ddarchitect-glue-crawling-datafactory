@@ -1,0 +1,3 @@
+deployment_bucket: ppfg-discovery-lambdas-serverless
+aws_project_tag: ddarchitect
+aws_lambda_role: arn:aws:iam::614303399241:role/DDARCHITEC-INFRA-LAMBDA-ROLE

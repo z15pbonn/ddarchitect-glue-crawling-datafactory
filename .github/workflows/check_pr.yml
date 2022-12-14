@@ -1,0 +1,28 @@
+name: Check PR
+on:
+  pull_request:
+    types: opened
+
+jobs:
+  deploy:
+    name: Check serverless.yaml syntax
+    runs-on: decathlon
+    env:
+      SLS_VERSION: 3.1.1
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Use Node.js 16
+      uses: actions/setup-node@v1
+      with:
+        node-version: 16
+
+    - name: Install Serverless Framework
+      run: npm install -g serverless@${{ env.SLS_VERSION }}
+
+    - run: npm ci
+
+    - name: Check serverless
+      run: sls print
