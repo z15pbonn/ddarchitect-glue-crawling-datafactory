@@ -2,14 +2,8 @@ import botocore
 import boto3
 import json
 import pandas as pd
-import logging
 import sys
 import time
-
-# Init logger
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger()
-
 
 def convert(val):
     val = val.replace('` object', '` string')
@@ -39,18 +33,20 @@ def wait_query(client, response):
             fin_requete = True
 
 
-def lambda_handler(event, context):
+def main(event, context):
     print('lecture des droits AWS cli')
     s3client = boto3.client('s3', region_name='eu-west-1')
-    folder = event.get('s3_folder')
-    idcardsrc = event.get('idcard')
-    schema = event.get('glue_schema')
+    print(event)
+    input = json.loads(event['body'])
+
+    folder = input["s3_folder"]
+    idcardsrc = input["idcard"]
+    schema = input["glue_schema"]
     obj = ''
     cut = folder.split('/')
     table = cut[len(cut) - 1]
 
     print('Traitement de la table ' + table)
-
     delta = False
 
     if folder.find('_delta') > 0:
@@ -69,10 +65,10 @@ def lambda_handler(event, context):
         code = response['Error']['Code']
         message = response['Error']['Message']
         if code == 'NoSuchKey':
-            logger.warn(f'No Such Key, {code}:\n{message}')
+            print(f'No Such Key, {code}:\n{message}')
             raise error
         else:
-            logger.warn(code + message)
+            print(code + message)
             raise error
     print(obj)
     idcard = obj['Body'].read().decode('utf-8')
@@ -154,14 +150,25 @@ def lambda_handler(event, context):
         code = response['Error']['Code']
         message = response['Error']['Message']
         if code == 'InvalidRequestException':
-            logger.warn(f'Error in query, {code}:\n{message}')
+            print(f'Error in query, {code}:\n{message}')
             raise error
         elif code == 'InternalServerException':
-            logger.warn(f'AWS {code}:\n{message}')
+            print(f'AWS {code}:\n{message}')
             raise error
         elif code == 'TooManyRequestsException':
             # Handle a wait, retry, etc here
             pass
         else:
-            logger.warn(f'AWS {code}:\n{message}')
+            print(f'AWS {code}:\n{message}')
             raise error
+
+    response = {
+        "statusCode": 200,
+        "statusDescription": "200 OK",
+        "isBase64Encoded": False,
+        "headers": {
+            "Content-Type": "text/html; charset=utf-8"
+        },
+        "body": "{\"message\":\"Traitement réussi\"}"
+	}
+    return response

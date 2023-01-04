@@ -1,4 +1,4 @@
-service: ddarchitect-glue-crawling-datafactory
+service: ddarchitect-glue-crawling-dfi
 frameworkVersion: '3'
 
 provider:
@@ -10,7 +10,7 @@ provider:
     role: ${self:custom.${self:provider.stage}.aws_lambda_role}
   deploymentBucket:
     name: ${self:custom.${self:provider.stage}.deployment_bucket}
-    
+
 package:
   exclude:
     - '**'
@@ -18,13 +18,25 @@ package:
     - 'lambda_package/**'
 
 functions:
-  hello:
-    name: ddarchitect-glue-crawling-datafactory-${self:provider.stage}
-    handler: lambda_package.handler.hello
-    memorySize : 128
-    timeout: 900
+  api:
+    name: ddarchitect-glue-crawling-dfi-${self:provider.stage}
+    handler: lambda_package.handler.main
+    memorySize : 512
+    timeout: 180
+    layers:
+      - arn:aws:lambda:eu-west-1:336392948345:layer:AWSSDKPandas-Python39:2
     tags:
       PROJECT: ${self:custom.${self:provider.stage}.aws_project_tag}
+    vpc:
+      securityGroupIds: ${self:custom.${self:provider.stage}.securityGroupIds}
+      subnetIds: ${self:custom.${self:provider.stage}.subnetIds}
+    events:
+      - alb:
+          listenerArn: ${self:custom.${self:provider.stage}.listenerArn}
+          priority: 5
+          multiValueHeaders: true
+          conditions:
+            path: /dfi-crawler
 
 plugins:
   - serverless-python-requirements

@@ -1,3 +1,5 @@
 deployment_bucket: ppfg-discovery-lambdas-serverless-prd
 aws_project_tag: ddarchitect
 aws_lambda_role: arn:aws:iam::585305677161:role/DDARCHITEC-INFRA-LAMBDA-ROLE
+securityGroupIds: ['sg-0966d017068d29700', 'sg-0b5aa3af2592535b7']
+subnetIds: ['subnet-0c5a69580cd4e3a44','subnet-05b86f085bf1e96dd']

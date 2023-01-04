@@ -1,3 +1,6 @@
 deployment_bucket: ppfg-discovery-lambdas-serverless
 aws_project_tag: ddarchitect
 aws_lambda_role: arn:aws:iam::614303399241:role/DDARCHITEC-INFRA-LAMBDA-ROLE
+securityGroupIds: ['sg-0ee87edd31265309f', 'sg-08e29ef303384bf1e', 'sg-0f42eb3bd3cfa0a6d']
+subnetIds: ['subnet-048f428a7a0484e3c', 'subnet-0d879dad863bfd835']
+listenerArn: arn:aws:elasticloadbalancing:eu-west-1:614303399241:listener/app/ALB-dddarchi-front/80c3694f75858324/c78e08cb4e631bcd
